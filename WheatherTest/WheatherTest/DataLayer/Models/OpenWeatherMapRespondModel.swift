@@ -72,6 +72,10 @@ class OpenWeatherMapRespondModel {
         switch main {
         case "Clouds":
             return .clouds
+        case "Rain":
+            return .rains
+        case "Clear":
+            return .sunny
         default:
             return .none
         }

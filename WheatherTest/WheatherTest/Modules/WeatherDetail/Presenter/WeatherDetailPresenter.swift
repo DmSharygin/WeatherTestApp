@@ -20,6 +20,14 @@ class WeatherDetailPresenter: NSObject {
         self.interactor = interactor
         self.wireFrame = wireFrame
     }
+    
+    // private
+    
+    func configureViewWithWeatherType(_ type: WeatherType) {
+        if let mainImage = UIImage(named: type.rawValue){
+            self.view.mainImage(mainImage)
+        }
+    }
 }
 
 extension WeatherDetailPresenter: IWeatherDetailPresenter {
@@ -31,8 +39,10 @@ extension WeatherDetailPresenter: IWeatherDetailPresenter {
                 self.view.showDownLoading(false)
             }
             if error != nil {
-                DispatchQueue.main.async {
-                    self.view.showError(message: error?.localizedDescription)
+                if let error = error as? ApiErrorStruct {
+                    DispatchQueue.main.async {
+                        self.view.showError(message: error.messageForError())
+                    }
                 }
                 return
             }
@@ -44,7 +54,7 @@ extension WeatherDetailPresenter: IWeatherDetailPresenter {
             }
             DispatchQueue.main.async {
                 self.view.setNowTemperature(temperature)
-                self.view.setNowWeatherType(model.getType())
+                self.configureViewWithWeatherType(model.getType())
             }
         }
     }
